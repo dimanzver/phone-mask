@@ -95,9 +95,10 @@ export default class PhoneMask {
     // Removing - with not-numeric symbols delete next/prev number
     if(e.key === 'Backspace' && cursorPos && /\D/.test(this.phoneInput.value[cursorPos - 1])) {
       e.preventDefault();
-      this.setPhone(this.phoneInput.value.substring(0, cursorPos - 2) + this.phoneInput.value.substring(cursorPos));
+      let prevPos = findNextPosition(this.phoneInput.value, cursorPos - 1, -1);
+      this.setPhone(this.phoneInput.value.substring(0, prevPos) + this.phoneInput.value.substring(prevPos + 1));
       this.inputPhoneHandler();
-      this.phoneInput.selectionStart = this.phoneInput.selectionEnd = cursorPos - 2;
+      this.phoneInput.selectionStart = this.phoneInput.selectionEnd = prevPos;
     }
 
     if(e.key === 'Delete' && /\D/.test(this.phoneInput.value[cursorPos])) {
