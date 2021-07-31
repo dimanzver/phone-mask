@@ -1,0 +1,32 @@
+{
+  "name": "phone-mask-international",
+  "version": "1.0.0",
+  "description": "International phone mask (with default russian mask)",
+  "main": "dist/PhoneMask.js",
+  "scripts": {
+    "build": "npx babel src --out-dir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dimanzver/phone-mask.git"
+  },
+  "keywords": [
+    "js",
+    "phone",
+    "mask",
+    "international",
+    "lightweight"
+  ],
+  "author": "dimanzver",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dimanzver/phone-mask/issues"
+  },
+  "homepage": "https://github.com/dimanzver/phone-mask#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8"
+  }
+}
