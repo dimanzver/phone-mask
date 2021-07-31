@@ -48,6 +48,24 @@ export default class PhoneMask {
     this.phoneLabel.appendChild(this.phoneInput);
   }
 
+  setPhone = (value) => {
+    this.phoneInput.value = value;
+    this.updateResult();
+  }
+
+  setCountryCode(value) {
+    this.countryInput.value = value;
+    this.updateResult();
+  }
+
+  getResultValue() {
+    return this.countryInput.value + ' ' + this.phoneInput.value;
+  }
+
+  updateResult = () => {
+    this.resultInput.value = this.getResultValue();
+  }
+
   initMask = () => {
     this.countryInput.addEventListener('input', this.inputCountryHandler);
     this.countryInput.addEventListener('blur', this.blurCountryHandler);
@@ -59,13 +77,13 @@ export default class PhoneMask {
   // Default country code is russian (7)
   blurCountryHandler = () => {
     if(!this.countryInput.value)
-      this.countryInput.value = 7;
+      this.setCountryCode(7);
   }
 
   // Country code - only numbers
   inputCountryHandler = (e) => {
     if(/\D/.test(e.data))
-      this.countryInput.value = this.countryInput.value.replace(/\D/g, '');
+      this.setCountryCode(this.countryInput.value.replace(/\D/g, ''));
   }
 
   keydownHandler = (e) => {
@@ -76,14 +94,14 @@ export default class PhoneMask {
     // Removing - with not-numeric symbols delete next/prev number
     if(e.key === 'Backspace' && cursorPos && /\D/.test(this.phoneInput.value[cursorPos - 1])) {
       e.preventDefault();
-      this.phoneInput.value = this.phoneInput.value.substring(0, cursorPos - 2) + this.phoneInput.value.substring(cursorPos);
+      this.setPhone(this.phoneInput.value.substring(0, cursorPos - 2) + this.phoneInput.value.substring(cursorPos));
       this.inputPhoneHandler();
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = cursorPos - 2;
     }
 
     if(e.key === 'Delete' && /\D/.test(this.phoneInput.value[cursorPos])) {
       e.preventDefault();
-      this.phoneInput.value = this.phoneInput.value.substring(0, cursorPos) + this.phoneInput.value.substring(cursorPos + 2);
+      this.setPhone(this.phoneInput.value.substring(0, cursorPos - 2) + this.phoneInput.value.substring(cursorPos));
       this.inputPhoneHandler();
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = cursorPos + 1;
     }
@@ -91,12 +109,12 @@ export default class PhoneMask {
 
   inputPhoneHandler = (e) => {
     let numericValue = this.phoneInput.value.replace(/\D/g, '');
-    if(!numericValue) return this.phoneInput.value = '';
+    if(!numericValue) return this.setPhone('');
     let cursorPos = this.phoneInput.selectionStart;
 
     // Inputting in end of line - just format
     if(this.phoneInput.value.length === cursorPos)
-      return this.phoneInput.value = formatRussianNumber(numericValue);
+      return this.setPhone(formatRussianNumber(numericValue));
 
     // Prevent inputting not numeric symbols
     if(e && e.data && /\D/.test(e.data))
@@ -106,7 +124,7 @@ export default class PhoneMask {
     if(checkBlockOverflow(this.phoneInput.value, cursorPos)) {
       if(checkOverflow(this.phoneInput.value))
         return preventInput(this.phoneInput);
-      this.phoneInput.value = formatRussianNumber(numericValue);
+      this.setPhone(formatRussianNumber(numericValue));
       let newPos = /\d/.test(this.phoneInput.value[cursorPos - 1]) ? cursorPos : cursorPos + 1;
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = newPos;
     }
@@ -119,7 +137,7 @@ export default class PhoneMask {
     if(pasted) {
       e.data = pasted.getData('Text').replace(/\D/g, '');
       e.data = e.data.replace(new RegExp('^(' + this.countryInput.value + '|8)'), '');
-      this.phoneInput.value = e.data;
+      this.setPhone(e.data);
       this.inputPhoneHandler(e);
     }
   }
