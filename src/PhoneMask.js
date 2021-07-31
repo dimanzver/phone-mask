@@ -2,6 +2,7 @@
 import formatRussianNumber from './utils/formatRussianNumber.js'
 import preventInput from './utils/preventInput.js'
 import { checkBlockOverflow, checkOverflow } from './utils/checkOverflow.js'
+import findNextPosition from './utils/findNextPosition.js';
 
 export default class PhoneMask {
   resultInput;
@@ -101,9 +102,10 @@ export default class PhoneMask {
 
     if(e.key === 'Delete' && /\D/.test(this.phoneInput.value[cursorPos])) {
       e.preventDefault();
-      this.setPhone(this.phoneInput.value.substring(0, cursorPos - 2) + this.phoneInput.value.substring(cursorPos));
+      let nextPos = findNextPosition(this.phoneInput.value, cursorPos);
+      this.setPhone(this.phoneInput.value.substring(0, nextPos) + this.phoneInput.value.substring(nextPos + 1));
       this.inputPhoneHandler();
-      this.phoneInput.selectionStart = this.phoneInput.selectionEnd = cursorPos + 1;
+      this.phoneInput.selectionStart = this.phoneInput.selectionEnd = nextPos;
     }
   }
 
