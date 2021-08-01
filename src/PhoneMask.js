@@ -49,6 +49,9 @@ export default class PhoneMask {
     this.phoneInput.maxLength = 15;
     this.phoneInput.className = 'ipi-phone-input';
     this.phoneInput.type = 'tel';
+    this.phoneInput.value = formatRussianNumber(
+      this.resultInput.value.replace(/^\+7/, '').replace(/\D/g, '')
+    );
     this.phoneLabel.appendChild(this.phoneInput);
   }
 
