@@ -25,6 +25,7 @@ export default class PhoneMask {
   destroy() {
     this.countryInput.removeEventListener('input', this.inputCountryHandler);
     this.countryInput.removeEventListener('blur', this.blurCountryHandler);
+    this.countryInput.removeEventListener('paste', this.pasteHandler);
     this.phoneInput.removeEventListener('input', this.inputPhoneHandler);
     this.phoneInput.removeEventListener('paste', this.pasteHandler);
     this.phoneInput.removeEventListener('keydown', this.keydownHandler);
@@ -89,6 +90,7 @@ export default class PhoneMask {
   initMask = () => {
     this.countryInput.addEventListener('input', this.inputCountryHandler);
     this.countryInput.addEventListener('blur', this.blurCountryHandler);
+    this.countryInput.addEventListener('paste', this.pasteHandler);
     this.phoneInput.addEventListener('input', this.inputPhoneHandler);
     this.phoneInput.addEventListener('paste', this.pasteHandler);
     this.phoneInput.addEventListener('keydown', this.keydownHandler);
