@@ -1,6 +1,6 @@
 {
   "name": "phone-mask-international",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "International phone mask (with default russian mask)",
   "main": "dist/PhoneMask.js",
   "scripts": {

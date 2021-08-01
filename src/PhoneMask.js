@@ -11,6 +11,9 @@ export default class PhoneMask {
   phoneInput;
   countryLabel;
   phoneLabel;
+  listeners = {
+    change: [],
+  };
 
   constructor (input) {
     this.resultInput = input;
@@ -49,18 +52,31 @@ export default class PhoneMask {
     this.phoneLabel.appendChild(this.phoneInput);
   }
 
-  setPhone = (value) => {
-    this.phoneInput.value = value;
+  on = (event, callback) => {
+     if(this.listeners[event])
+       this.listeners[event].push(callback);
+  }
+
+  trigger = (event, payload) => {
+    if(this.listeners[event]) {
+      this.listeners[event].forEach(callback => callback(payload));
+    }
+  }
+
+  setPhone = (value, filtered = true) => {
+    this.phoneInput.value = filtered ? formatRussianNumber(value) : value;
     this.updateResult();
+    this.trigger('change', this.getResultValue());
   }
 
   setCountryCode(value) {
     this.countryInput.value = value;
     this.updateResult();
+    this.trigger('change', this.getResultValue());
   }
 
   getResultValue() {
-    return this.countryInput.value + ' ' + this.phoneInput.value;
+    return '+' + this.countryInput.value + ' ' + this.phoneInput.value;
   }
 
   updateResult = () => {
@@ -82,9 +98,8 @@ export default class PhoneMask {
   }
 
   // Country code - only numbers
-  inputCountryHandler = (e) => {
-    if(/\D/.test(e.data))
-      this.setCountryCode(this.countryInput.value.replace(/\D/g, ''));
+  inputCountryHandler = () => {
+    this.setCountryCode(this.countryInput.value.replace(/\D/g, ''));
   }
 
   keydownHandler = (e) => {
@@ -96,7 +111,7 @@ export default class PhoneMask {
     if(e.key === 'Backspace' && cursorPos && /\D/.test(this.phoneInput.value[cursorPos - 1])) {
       e.preventDefault();
       let prevPos = findNextPosition(this.phoneInput.value, cursorPos - 1, -1);
-      this.setPhone(this.phoneInput.value.substring(0, prevPos) + this.phoneInput.value.substring(prevPos + 1));
+      this.setPhone(this.phoneInput.value.substring(0, prevPos) + this.phoneInput.value.substring(prevPos + 1), false);
       this.inputPhoneHandler();
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = prevPos;
     }
@@ -104,7 +119,7 @@ export default class PhoneMask {
     if(e.key === 'Delete' && /\D/.test(this.phoneInput.value[cursorPos])) {
       e.preventDefault();
       let nextPos = findNextPosition(this.phoneInput.value, cursorPos);
-      this.setPhone(this.phoneInput.value.substring(0, nextPos) + this.phoneInput.value.substring(nextPos + 1));
+      this.setPhone(this.phoneInput.value.substring(0, nextPos) + this.phoneInput.value.substring(nextPos + 1), false);
       this.inputPhoneHandler();
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = nextPos;
     }
@@ -117,7 +132,7 @@ export default class PhoneMask {
 
     // Inputting in end of line - just format
     if(this.phoneInput.value.length === cursorPos)
-      return this.setPhone(formatRussianNumber(numericValue));
+      return this.setPhone(formatRussianNumber(numericValue), false);
 
     // Prevent inputting not numeric symbols
     if(e && e.data && /\D/.test(e.data))
@@ -127,7 +142,7 @@ export default class PhoneMask {
     if(checkBlockOverflow(this.phoneInput.value, cursorPos)) {
       if(checkOverflow(this.phoneInput.value))
         return preventInput(this.phoneInput);
-      this.setPhone(formatRussianNumber(numericValue));
+      this.setPhone(formatRussianNumber(numericValue), false);
       let newPos = /\d/.test(this.phoneInput.value[cursorPos - 1]) ? cursorPos : cursorPos + 1;
       this.phoneInput.selectionStart = this.phoneInput.selectionEnd = newPos;
     }
@@ -140,7 +155,7 @@ export default class PhoneMask {
     if(pasted) {
       e.data = pasted.getData('Text').replace(/\D/g, '');
       e.data = e.data.replace(new RegExp('^(' + this.countryInput.value + '|8)'), '');
-      this.setPhone(e.data);
+      this.setPhone(e.data, false);
       this.inputPhoneHandler(e);
     }
   }
