@@ -89,6 +89,13 @@ export default class PhoneMask {
     return '+' + this.countryInput.value + ' ' + this.phoneInput.value;
   }
 
+  getObjectValue() {
+    return {
+      countryCode: parseInt(this.countryInput.value) || null,
+      phone: parseInt(this.phoneInput.value) || null,
+    };
+  }
+
   updateResult = () => {
     this.resultInput.value = this.getResultValue();
   }
