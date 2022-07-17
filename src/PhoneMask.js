@@ -92,7 +92,7 @@ export default class PhoneMask {
   getObjectValue() {
     return {
       countryCode: parseInt(this.countryInput.value) || null,
-      phone: parseInt(this.phoneInput.value) || null,
+      phone: parseInt(this.phoneInput.value.replace(/\D/g, '')) || null,
     };
   }
 
