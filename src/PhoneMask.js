@@ -15,10 +15,15 @@ export default class PhoneMask {
     change: [],
   };
 
-  constructor (input) {
+  constructor (input, defaultData = {}) {
     this.resultInput = input;
     this.cont = input.parentNode;
-    this.initHtml();
+    const data = {
+      countryCode: '7',
+      phone: '',
+      ...defaultData,
+    };
+    this.initHtml(data);
     this.initMask();
   }
 
@@ -34,14 +39,14 @@ export default class PhoneMask {
     this.countryInput = this.phoneInput = this.countryLabel = this.phoneInput = null;
   }
 
-  initHtml = () => {
+  initHtml = ({countryCode, phone}) => {
     this.countryLabel = document.createElement('label');
     this.countryLabel.innerHTML = '<span class="ipi-plus">+</span>';
     this.cont.appendChild(this.countryLabel);
     this.countryInput = document.createElement('input');
     this.countryInput.maxLength = 3;
     this.countryInput.className = 'ipi-country-input';
-    this.countryInput.value = 7;
+    this.countryInput.value = countryCode;
     this.countryLabel.appendChild(this.countryInput);
 
     this.phoneLabel = document.createElement('label');
@@ -51,7 +56,8 @@ export default class PhoneMask {
     this.phoneInput.className = 'ipi-phone-input';
     this.phoneInput.type = 'tel';
     this.phoneInput.value = formatRussianNumber(
-      this.resultInput.value.replace(/^\+7/, '').replace(/\D/g, '')
+        phone ? phone.toString() :
+            this.resultInput.value.replace(/^\+?7/, '').replace(/\D/g, '')
     );
     this.phoneLabel.appendChild(this.phoneInput);
   }
